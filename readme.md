@@ -9,7 +9,7 @@ Of course, most of this problems can be avoided by being very careful when addin
 - Update (Patch) String values on the fly.
 - Serverless implementation, relying on Google Spreadsheets for data storage
 
-## setup
+## Setup
 
 ### Adding the library to your project
 
@@ -29,11 +29,13 @@ dependencies {
 ```
 
 ### Setting up the spreadhseet
-We recomend that, if you can, you use the first setup (A). The drawback is that your string patches spreadhseet has to be public. If you want your spreadsheets to be private use the setup (B).  
-#### A - (Easy) Public spreadhseet
+We recomend that, if you can, you use the first setup (A). The drawback is that your string patches spreadhseet has to be public. If you want your spreadsheets to be private use the setup (B).
+
+<details>
+<summary>A - (Easy) Public spreadhseet</summary>
 
 ##### 1 Getting the spreadsheet key
-- Go to google Drive a create a new spreadsheet
+- Go to google Drive and create a new spreadsheet
 - Add this 3 words into the first 3 columns, on the firt row: `lang`, `key` & `value`  
 <img width="485" alt="captura de pantalla 2017-07-06 a las 10 57 11" src="https://user-images.githubusercontent.com/4237014/27916668-1a378334-626a-11e7-9a6c-b4c21fe1b470.png">
 - Click on File > Publish to the web > Publish
@@ -43,8 +45,10 @@ We recomend that, if you can, you use the first setup (A). The drawback is that 
 - Name your worksheet (bottom tab) with the same name as your android build number (this is optional but you have to, at least, name the worksheet with something you'll remember)
 - [optional] You can create multiple worksheets named after each android build number, that way you can mantain different String patches for different versions of your app  
 <img width="241" alt="captura de pantalla 2017-07-06 a las 11 01 55" src="https://user-images.githubusercontent.com/4237014/27916819-8c12dd1e-626a-11e7-8912-37f5cd940196.png">
+</details>
 
-#### B - (Hard) Private spreadhseet
+<details>
+<summary>B - (Hard) Private spreadhseet</summary>
 
 ##### 1 Getting the spreadsheet key
 - Go to google Drive a create a new spreadsheet
@@ -56,7 +60,6 @@ We recomend that, if you can, you use the first setup (A). The drawback is that 
 - Name your worksheet (bottom tab) with the same name as your android build number (this is optional but you have to, at least, name the worksheet with something you'll remember)
 - [optional] You can create multiple worksheets named after each android build number, that way you can mantain different String patches for different versions of your app  
 <img width="241" alt="captura de pantalla 2017-07-06 a las 11 01 55" src="https://user-images.githubusercontent.com/4237014/27916819-8c12dd1e-626a-11e7-8912-37f5cd940196.png">
-
 
 ##### 3 Getting Google App credentials
 - Go to Google Dev Console https://console.developers.google.com and create a new App
@@ -78,11 +81,27 @@ We recomend that, if you can, you use the first setup (A). The drawback is that 
 - Copy your **Refresh token** somewhere, you'll need it too. (You might need to press in **Step 2Exchange authorization code for tokens** to see the tokens)  
 <img width="300" alt="captura de pantalla 2017-07-06 a las 11 48 47" src="https://user-images.githubusercontent.com/4237014/27917050-29074dc6-626b-11e7-9fc4-5c14289e9596.png">
 
-
 - You should now have the **client ID**, **client Secret** and **Refresh Token**. You're ready!
+</details>
 
 
-## usage
+## Usage
+Call `syncStringPatches()` in your Android `Application` class, supplying the `context` and your `spreadSheetKey` as the only mandatory parameters.
 
-//TODO
+```kotlin
+class StringsPatcherApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
 
+        val spreadSheetKey = "YOUR_SPREAD_SHEET_KEY"
+        syncStringPatches(this, spreadSheetKey)
+    }
+} 
+```
+
+`syncStringPatches` expose next optional params: 
+
+ * *worksheetName*: the worksheet name (The spreadsheet may be composed by several worksheets). This param has as default value the versionCode of the application. That way, your spreadsheet should have as many worksheets as release versions (1,2,3,4,...)
+ * *locale*: the locale used to filter strings. As default value the system locale is assigned.
+ * *printLogs*: if true, errors are printed to the standard android output. By default, takes `BuildConfig.DEBUG` flag as its value.
+ * *googleCredentials*: only supply these credentials if the spreadSheet has private access
