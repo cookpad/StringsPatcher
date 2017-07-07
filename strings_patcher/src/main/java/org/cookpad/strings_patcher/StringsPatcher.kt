@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.AsyncTask
 import android.support.annotation.StringRes
-import android.util.Log
 import org.cookpad.strings_patcher.internal.*
 
 private var patches: Map<String, String>? = null
@@ -37,7 +36,7 @@ private var patches: Map<String, String>? = null
  * This param has as default value the versionCode of the application. That way, your spreadsheet should
  * have as many worksheets as release versions (1,2,3,4,...)
  * @property locale the locale used to filter strings. As default value the system locale is assigned.
- * @property printLogs if true errors are printed to the standard android output. By default, takes BuildConfig.DEBUG flag as its value.
+ * @property logger callback function to listen for errors emission. As default a dummy implementation does nothing.
  * @property googleCredentials only supply these credentials if the spreadSheet has private access
  */
 @JvmOverloads
@@ -45,7 +44,7 @@ fun syncStringPatches(context: Context,
                       spreadSheetKey: String,
                       worksheetName: String = versionCode(context),
                       locale: String = defaultLocale,
-                      printLogs: Boolean = BuildConfig.DEBUG,
+                      logger: (Throwable) -> Unit = {},
                       googleCredentials: GoogleCredentials? = null) {
 
     val lastWorksheetName = loadWorksheetName(context)
@@ -62,7 +61,7 @@ fun syncStringPatches(context: Context,
             patches = downloadPatches(googleCredentials, spreadSheetKey, worksheetName, locale, context)
             patches?.let { savePatches(it, context) }
         } catch (e: Exception) {
-            if (printLogs) Log.e("STRING_PATCHER", e.message)
+            logger.invoke(e)
         }
     }
 }

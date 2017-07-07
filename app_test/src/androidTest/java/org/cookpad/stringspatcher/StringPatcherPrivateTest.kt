@@ -39,4 +39,6 @@ class StringPatcherPrivateTest {
     @Test fun step5VerifySuccessAnotherValidWorksheetNamePrivateWorksheet() = verifySuccessAnotherValidWorksheetNameWorksheet(privateWorksheetName, googleCredentials)
 
     @Test fun step6VerifySuccessAnotherLocalePrivateWorksheet() = verifySuccessAnotherLocaleWorksheet(privateWorksheetName, googleCredentials)
+
+    @Test fun step7VerifyFailureDueToWrongCredentials() = verifyFailureDueToWrongCredentials(privateWorksheetName)
 }

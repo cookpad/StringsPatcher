@@ -61,6 +61,12 @@ internal fun jsonFromPOSTRequest(url: String, params: Uri.Builder): JSONObject {
 
         urlConnection.connect()
 
+        if (urlConnection.responseCode != 200) {
+            val inputError = BufferedInputStream(urlConnection.errorStream)
+            val string = inputError.bufferedReader().use { it.readText() }
+            throw RuntimeException(string)
+        }
+
         val input = BufferedInputStream(urlConnection.inputStream)
         val jsonString = input.bufferedReader().use { it.readText() }
         return JSONObject(jsonString)

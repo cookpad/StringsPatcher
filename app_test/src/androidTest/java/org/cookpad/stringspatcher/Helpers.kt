@@ -18,33 +18,31 @@ package org.cookpad.stringspatcher
 
 import android.content.Context
 import android.support.test.InstrumentationRegistry
-import org.assertj.core.api.Assertions
-import org.cookpad.strings_patcher.internal.GoogleCredentials
+import org.assertj.core.api.Assertions.assertThat
 import org.cookpad.strings_patcher.getSmartString
+import org.cookpad.strings_patcher.internal.GoogleCredentials
 import org.cookpad.strings_patcher.syncStringPatches
 import java.io.File
 
-private fun sleep() = Thread.sleep(3000)
+private fun sleep() = Thread.sleep(4000)
 
 fun verifyFailureSuccessWorksheet(googleCredentials: GoogleCredentials? = null) {
-    val context = InstrumentationRegistry.getTargetContext()
+    removeToken()
 
-    //Remove token
-    context.getSharedPreferences("org.cookpad.strings_patcher", Context.MODE_PRIVATE)
-            .edit()
-            .putString("key_access_token", null)
-            .apply()
-
+    sleep()
     //Remove patches
+    val context = InstrumentationRegistry.getTargetContext()
     val file = File("${context.filesDir}/StringPatches.ser")
     if (file.exists()) file.delete()
 
-    syncStringPatches(context, "Boom!!", googleCredentials = googleCredentials)
+    var errorMessage = ""
+    syncStringPatches(context, "Boom!!", googleCredentials = googleCredentials, logger = { errorMessage = it.toString() })
 
     sleep()
 
     val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    Assertions.assertThat(welcomeMessage).isEqualTo("Welcome message")
+    assertThat(welcomeMessage).isEqualTo("Welcome message")
+    assertThat(errorMessage).contains("java.io.FileNotFoundException: https://spreadsheets.google.com/feeds/worksheets/Boom!!/")
 }
 
 fun verifySuccessWorksheet(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
@@ -55,7 +53,7 @@ fun verifySuccessWorksheet(worksheetName: String, googleCredentials: GoogleCrede
     sleep()
 
     val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    Assertions.assertThat(welcomeMessage).isEqualTo("Hi Updated!")
+    assertThat(welcomeMessage).isEqualTo("Hi Updated!")
 }
 
 fun verifyFailureAfterSuccessWorksheet(googleCredentials: GoogleCredentials? = null) {
@@ -65,7 +63,7 @@ fun verifyFailureAfterSuccessWorksheet(googleCredentials: GoogleCredentials? = n
     sleep()
 
     val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    Assertions.assertThat(welcomeMessage).isEqualTo("Hi Updated!")
+    assertThat(welcomeMessage).isEqualTo("Hi Updated!")
 }
 
 fun verifyAfterChangeWorksheetNamePreviousIsDeleted(googleCredentials: GoogleCredentials? = null) {
@@ -75,7 +73,7 @@ fun verifyAfterChangeWorksheetNamePreviousIsDeleted(googleCredentials: GoogleCre
     sleep()
 
     val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    Assertions.assertThat(welcomeMessage).isEqualTo("Welcome message")
+    assertThat(welcomeMessage).isEqualTo("Welcome message")
 }
 
 fun verifySuccessAnotherValidWorksheetNameWorksheet(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
@@ -85,7 +83,7 @@ fun verifySuccessAnotherValidWorksheetNameWorksheet(worksheetName: String, googl
     sleep()
 
     val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    Assertions.assertThat(welcomeMessage).isEqualTo("Hi 2 Updated!")
+    assertThat(welcomeMessage).isEqualTo("Hi 2 Updated!")
 }
 
 fun verifySuccessAnotherLocaleWorksheet(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
@@ -95,5 +93,27 @@ fun verifySuccessAnotherLocaleWorksheet(worksheetName: String, googleCredentials
     sleep()
 
     val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    Assertions.assertThat(welcomeMessage).isEqualTo("Hola Actualizado!")
+    assertThat(welcomeMessage).isEqualTo("Hola Actualizado!")
 }
+
+
+fun verifyFailureDueToWrongCredentials(worksheetName: String) {
+    removeToken()
+
+    val context = InstrumentationRegistry.getTargetContext()
+    var errorMessage = ""
+
+    syncStringPatches(context, worksheetName, locale = "es",
+            googleCredentials = GoogleCredentials("imgod", "openthatdoor", "now"), logger = { errorMessage = it.toString() })
+
+    sleep()
+
+    assertThat(errorMessage).contains("The OAuth client was not found.")
+}
+
+private fun removeToken() =
+        InstrumentationRegistry.getTargetContext()
+                .getSharedPreferences("org.cookpad.strings_patcher", Context.MODE_PRIVATE)
+                .edit()
+                .putString("key_access_token", null)
+                .apply()
