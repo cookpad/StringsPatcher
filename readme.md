@@ -1,6 +1,7 @@
 # Strings Patcher
 
 It's very common (at least in our company) that just after a new release, someone discovers a translation that is wrong, or even missing in a specific language (we support over 10 different languages).  
+
 When this happens we have 2 options: Create a patch release with the missing translation and release again, whith all the work and overhead that it implies, or wait until next week for a release with the translation fixed. 
 
 Of course, most of this problems can be avoided by being very careful when adding a new translation, but we are humans and we make mistakes. This library has been made for making those mistakes a little bit less painful.
@@ -101,7 +102,11 @@ class StringsPatcherApp : Application() {
 
 `syncStringPatches` expose next optional params: 
 
- * *worksheetName*: the worksheet name (The spreadsheet may be composed by several worksheets). This param has as default value the versionCode of the application. That way, your spreadsheet should have as many worksheets as release versions (1,2,3,4,...)
+ * *worksheetName*: the worksheet name (The spreadsheet may be composed by several worksheets). This param has as default value the versionCode of the application. That way, your spreadsheet should have as many worksheets as release versions (1,2,3,4,...).
  * *locale*: the locale used to filter strings. As default value the system locale is assigned.
- * *printLogs*: if true, errors are printed to the standard android output. By default, takes `BuildConfig.DEBUG` flag as its value.
- * *googleCredentials*: only supply these credentials if the spreadSheet has private access
+ * *logger*: callback function to listen for errors emission. As default a dummy implementation does nothing.
+ * *googleCredentials*: only supply these credentials if the spreadSheet has private access.
+ 
+Once StringPatches has been initalized, in order to access the patches, you must retrieve string resources at runtime by calling either `Context::getSmartString` or `Resources::getSmartString`.
+
+If there is no patch for a given key, the library fallbacks to the system resources.
