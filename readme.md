@@ -75,9 +75,12 @@ We recomend that, if you can, you use the first setup (A). The drawback is that 
 - Click on the top-right settings icon to open the settings drawer
 - Check **Use your own OAuth credentials** and add your client ID and client Secret  
 <img width="300" alt="captura de pantalla 2017-07-06 a las 11 39 30" src="https://user-images.githubusercontent.com/4237014/27917013-0f7d9450-626b-11e7-92e2-31904dc36297.png">
+
 - Now on the left input bow that says *input your own scopes* type `https://www.googleapis.com/auth/spreadsheets.readonly` and press **Authorize APIs**  
 <img width="300" alt="captura de pantalla 2017-07-06 a las 11 48 38" src="https://user-images.githubusercontent.com/4237014/27916893-b432a496-626a-11e7-9930-8e5ab842e927.png">
+
 - You will see a google login form. Login with the **same user** that you used to create the spreadhseet. Press **Allow** (this only allows the app to read your spreadsheets, not modify anything)
+
 - Wait for the playground to load and then press **Exchange authorization code for tokens**
 - Copy your **Refresh token** somewhere, you'll need it too. (You might need to press in **Step 2Exchange authorization code for tokens** to see the tokens)  
 <img width="300" alt="captura de pantalla 2017-07-06 a las 11 48 47" src="https://user-images.githubusercontent.com/4237014/27917050-29074dc6-626b-11e7-9fc4-5c14289e9596.png">
