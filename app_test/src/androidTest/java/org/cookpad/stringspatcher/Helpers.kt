@@ -40,8 +40,15 @@ fun verifyFailureSuccessWorksheet(googleCredentials: GoogleCredentials? = null) 
 
     sleep()
 
-    val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    assertThat(welcomeMessage).isEqualTo("Welcome message")
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("Welcome message")
+    assertThat(context.resources.getSmartString(R.string.welcome_message))
+            .isEqualTo("Welcome message")
+    assertThat(context.getSmartString(R.string.no_results_found, "rice"))
+            .isEqualTo("No results found for rice")
+    assertThat(context.resources.getSmartString(R.string.no_results_found, "rice"))
+            .isEqualTo("No results found for rice")
+
     assertThat(errorMessage).contains("java.io.FileNotFoundException: https://spreadsheets.google.com/feeds/worksheets/Boom!!/")
 }
 
@@ -52,8 +59,15 @@ fun verifySuccessWorksheet(worksheetName: String, googleCredentials: GoogleCrede
 
     sleep()
 
-    val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    assertThat(welcomeMessage).isEqualTo("Hi Updated!")
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("Hi Updated!")
+    assertThat(context.resources.getSmartString(R.string.welcome_message))
+            .isEqualTo("Hi Updated!")
+
+    assertThat(context.getSmartString(R.string.no_results_found, "rice"))
+            .isEqualTo("No results found for rice updated!")
+    assertThat(context.resources.getSmartString(R.string.no_results_found, "rice"))
+            .isEqualTo("No results found for rice updated!")
 }
 
 fun verifyFailureAfterSuccessWorksheet(googleCredentials: GoogleCredentials? = null) {
@@ -62,8 +76,10 @@ fun verifyFailureAfterSuccessWorksheet(googleCredentials: GoogleCredentials? = n
 
     sleep()
 
-    val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    assertThat(welcomeMessage).isEqualTo("Hi Updated!")
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("Hi Updated!")
+    assertThat(context.resources.getSmartString(R.string.welcome_message))
+            .isEqualTo("Hi Updated!")
 }
 
 fun verifyAfterChangeWorksheetNamePreviousIsDeleted(googleCredentials: GoogleCredentials? = null) {
@@ -72,8 +88,10 @@ fun verifyAfterChangeWorksheetNamePreviousIsDeleted(googleCredentials: GoogleCre
 
     sleep()
 
-    val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    assertThat(welcomeMessage).isEqualTo("Welcome message")
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("Welcome message")
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("Welcome message")
 }
 
 fun verifySuccessAnotherValidWorksheetNameWorksheet(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
@@ -82,8 +100,10 @@ fun verifySuccessAnotherValidWorksheetNameWorksheet(worksheetName: String, googl
 
     sleep()
 
-    val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    assertThat(welcomeMessage).isEqualTo("Hi 2 Updated!")
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("Hi 2 Updated!")
+    assertThat(context.resources.getSmartString(R.string.welcome_message))
+            .isEqualTo("Hi 2 Updated!")
 }
 
 fun verifySuccessAnotherLocaleWorksheet(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
@@ -92,8 +112,10 @@ fun verifySuccessAnotherLocaleWorksheet(worksheetName: String, googleCredentials
 
     sleep()
 
-    val welcomeMessage = context.getSmartString(R.string.welcome_message)
-    assertThat(welcomeMessage).isEqualTo("Hola Actualizado!")
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("Hola Actualizado!")
+    assertThat(context.resources.getSmartString(R.string.welcome_message))
+            .isEqualTo("Hola Actualizado!")
 }
 
 

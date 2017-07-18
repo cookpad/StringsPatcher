@@ -68,9 +68,19 @@ fun syncStringPatches(context: Context,
 
 fun Context.getSmartString(@StringRes stringId: Int): String = resources.getSmartString(stringId)
 
+fun Context.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): String = resources.getSmartString(stringId, *formatArgs)
+
 fun Resources.getSmartString(@StringRes stringId: Int): String =
         patches?.let {
             val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
             it[key]
         } ?: this.getString(stringId)
+
+fun Resources.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): String = patches?.let {
+    val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
+    it[key]?.format(*formatArgs)
+} ?: this.getString(stringId, *formatArgs)
+
+
+
 
