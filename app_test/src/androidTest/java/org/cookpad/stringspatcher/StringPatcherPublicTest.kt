@@ -37,4 +37,8 @@ class StringPatcherPublicTest {
     @Test fun step5VerifySuccessAnotherValidWorksheetNamePublicWorksheet() = verifySuccessAnotherValidWorksheetNameWorksheet(publicWorksheetName)
 
     @Test fun step6VerifySuccessAnotherLocalePublicWorksheet() = verifySuccessAnotherLocaleWorksheet(publicWorksheetName)
+
+    @Test fun step7VerifyVerifyEnableDebugWithPatches() = verifyEnableDebugWithPatches(privateWorksheetName)
+
+    @Test fun step8VerifyEnableDebugWithoutPatches() = verifyEnableDebugWithoutPatches()
 }

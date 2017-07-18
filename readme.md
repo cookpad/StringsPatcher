@@ -90,7 +90,7 @@ We recomend that, if you can, you use the first setup (A). The drawback is that 
 
 
 ## Usage
-Call `syncStringPatches()` in your Android `Application` class, supplying the `context` and your `spreadSheetKey` as the only mandatory parameters.
+Call `syncStringPatcher()` in your Android `Application` class, supplying the `context` and your `spreadSheetKey` as the only mandatory parameters.
 
 ```kotlin
 class StringsPatcherApp : Application() {
@@ -98,12 +98,12 @@ class StringsPatcherApp : Application() {
         super.onCreate()
 
         val spreadSheetKey = "YOUR_SPREAD_SHEET_KEY"
-        syncStringPatches(this, spreadSheetKey)
+        syncStringPatcher(this, spreadSheetKey)
     }
 } 
 ```
 
-`syncStringPatches` expose next optional params: 
+`syncStringPatcher` expose next optional params:
 
  * *worksheetName*: the worksheet name (The spreadsheet may be composed by several worksheets). This param has as default value the versionCode of the application. That way, your spreadsheet should have as many worksheets as release versions (1,2,3,4,...).
  * *locale*: the locale used to filter strings. As default value the system locale is assigned.
@@ -113,3 +113,6 @@ class StringsPatcherApp : Application() {
 Once StringPatches has been initalized, in order to access the patches, you must retrieve string resources at runtime by calling either `Context::getSmartString` or `Resources::getSmartString`. For formatting strings, `Context::getSmartString(formatArgs)` and `Resources::getSmartString(formatArgs)` are exposed.
 
 If there is no patch for a given key, the library fallbacks to the system resources.
+
+### Debug
+By setting `stringPatcherDebugEnabled` as true the lib will append to the value its associated key, as such as a pencil emoji. This is intended to make clear which values are handled by the lib and, therefore, eligible to be updated by changing its value from the spreadsheet.

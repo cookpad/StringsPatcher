@@ -21,7 +21,8 @@ import android.support.test.InstrumentationRegistry
 import org.assertj.core.api.Assertions.assertThat
 import org.cookpad.strings_patcher.getSmartString
 import org.cookpad.strings_patcher.internal.GoogleCredentials
-import org.cookpad.strings_patcher.syncStringPatches
+import org.cookpad.strings_patcher.stringPatcherDebugEnabled
+import org.cookpad.strings_patcher.syncStringPatcher
 import java.io.File
 
 private fun sleep() = Thread.sleep(4000)
@@ -30,13 +31,12 @@ fun verifyFailureSuccessWorksheet(googleCredentials: GoogleCredentials? = null) 
     removeToken()
 
     sleep()
-    //Remove patches
+    removePatches()
+
     val context = InstrumentationRegistry.getTargetContext()
-    val file = File("${context.filesDir}/StringPatches.ser")
-    if (file.exists()) file.delete()
 
     var errorMessage = ""
-    syncStringPatches(context, "Boom!!", googleCredentials = googleCredentials, logger = { errorMessage = it.toString() })
+    syncStringPatcher(context, "Boom!!", googleCredentials = googleCredentials, logger = { errorMessage = it.toString() })
 
     sleep()
 
@@ -55,7 +55,7 @@ fun verifyFailureSuccessWorksheet(googleCredentials: GoogleCredentials? = null) 
 fun verifySuccessWorksheet(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
     val context = InstrumentationRegistry.getTargetContext()
 
-    syncStringPatches(context, worksheetName, googleCredentials = googleCredentials)
+    syncStringPatcher(context, worksheetName, googleCredentials = googleCredentials)
 
     sleep()
 
@@ -72,7 +72,7 @@ fun verifySuccessWorksheet(worksheetName: String, googleCredentials: GoogleCrede
 
 fun verifyFailureAfterSuccessWorksheet(googleCredentials: GoogleCredentials? = null) {
     val context = InstrumentationRegistry.getTargetContext()
-    syncStringPatches(context, "Boom!!", googleCredentials = googleCredentials)
+    syncStringPatcher(context, "Boom!!", googleCredentials = googleCredentials)
 
     sleep()
 
@@ -84,7 +84,7 @@ fun verifyFailureAfterSuccessWorksheet(googleCredentials: GoogleCredentials? = n
 
 fun verifyAfterChangeWorksheetNamePreviousIsDeleted(googleCredentials: GoogleCredentials? = null) {
     val context = InstrumentationRegistry.getTargetContext()
-    syncStringPatches(context, "Boom!!", worksheetName = "whatever", googleCredentials = googleCredentials)
+    syncStringPatcher(context, "Boom!!", worksheetName = "whatever", googleCredentials = googleCredentials)
 
     sleep()
 
@@ -96,7 +96,7 @@ fun verifyAfterChangeWorksheetNamePreviousIsDeleted(googleCredentials: GoogleCre
 
 fun verifySuccessAnotherValidWorksheetNameWorksheet(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
     val context = InstrumentationRegistry.getTargetContext()
-    syncStringPatches(context, worksheetName, worksheetName = "2", googleCredentials = googleCredentials)
+    syncStringPatcher(context, worksheetName, worksheetName = "2", googleCredentials = googleCredentials)
 
     sleep()
 
@@ -108,7 +108,7 @@ fun verifySuccessAnotherValidWorksheetNameWorksheet(worksheetName: String, googl
 
 fun verifySuccessAnotherLocaleWorksheet(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
     val context = InstrumentationRegistry.getTargetContext()
-    syncStringPatches(context, worksheetName, locale = "es", googleCredentials = googleCredentials)
+    syncStringPatcher(context, worksheetName, locale = "es", googleCredentials = googleCredentials)
 
     sleep()
 
@@ -118,6 +118,37 @@ fun verifySuccessAnotherLocaleWorksheet(worksheetName: String, googleCredentials
             .isEqualTo("Hola Actualizado!")
 }
 
+fun verifyEnableDebugWithPatches(worksheetName: String, googleCredentials: GoogleCredentials? = null) {
+    val context = InstrumentationRegistry.getTargetContext()
+    syncStringPatcher(context, worksheetName, locale = "es", googleCredentials = googleCredentials)
+
+    sleep()
+
+    stringPatcherDebugEnabled = true
+
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("welcome_message  📝  Hola Actualizado!")
+    assertThat(context.resources.getSmartString(R.string.welcome_message))
+            .isEqualTo("welcome_message  📝  Hola Actualizado!")
+
+    stringPatcherDebugEnabled = false
+}
+
+fun verifyEnableDebugWithoutPatches() {
+    val context = InstrumentationRegistry.getTargetContext()
+
+    removePatches()
+    sleep()
+
+    stringPatcherDebugEnabled = true
+
+    assertThat(context.getSmartString(R.string.welcome_message))
+            .isEqualTo("welcome_message  📝  Hola Actualizado!")
+    assertThat(context.resources.getSmartString(R.string.welcome_message))
+            .isEqualTo("welcome_message  📝  Hola Actualizado!")
+
+    stringPatcherDebugEnabled = false
+}
 
 fun verifyFailureDueToWrongCredentials(worksheetName: String) {
     removeToken()
@@ -125,7 +156,7 @@ fun verifyFailureDueToWrongCredentials(worksheetName: String) {
     val context = InstrumentationRegistry.getTargetContext()
     var errorMessage = ""
 
-    syncStringPatches(context, worksheetName, locale = "es",
+    syncStringPatcher(context, worksheetName, locale = "es",
             googleCredentials = GoogleCredentials("imgod", "openthatdoor", "now"), logger = { errorMessage = it.toString() })
 
     sleep()
@@ -133,9 +164,16 @@ fun verifyFailureDueToWrongCredentials(worksheetName: String) {
     assertThat(errorMessage).contains("The OAuth client was not found.")
 }
 
+
 private fun removeToken() =
         InstrumentationRegistry.getTargetContext()
                 .getSharedPreferences("org.cookpad.strings_patcher", Context.MODE_PRIVATE)
                 .edit()
                 .putString("key_access_token", null)
                 .apply()
+
+private fun removePatches() {
+    val context = InstrumentationRegistry.getTargetContext()
+    val file = File("${context.filesDir}/StringPatches.ser")
+    if (file.exists()) file.delete()
+}

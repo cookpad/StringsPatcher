@@ -23,6 +23,7 @@ import android.support.annotation.StringRes
 import org.cookpad.strings_patcher.internal.*
 
 private var patches: Map<String, String>? = null
+var stringPatcherDebugEnabled = false
 
 /**
  * Call it as soon as possible and preferably one time per application execution.
@@ -40,7 +41,7 @@ private var patches: Map<String, String>? = null
  * @property googleCredentials only supply these credentials if the spreadSheet has private access
  */
 @JvmOverloads
-fun syncStringPatches(context: Context,
+fun syncStringPatcher(context: Context,
                       spreadSheetKey: String,
                       worksheetName: String = versionCode(context),
                       locale: String = defaultLocale,
@@ -70,17 +71,25 @@ fun Context.getSmartString(@StringRes stringId: Int): String = resources.getSmar
 
 fun Context.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): String = resources.getSmartString(stringId, *formatArgs)
 
-fun Resources.getSmartString(@StringRes stringId: Int): String =
-        patches?.let {
-            val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
-            it[key]
-        } ?: this.getString(stringId)
-
-fun Resources.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): String = patches?.let {
+fun Resources.getSmartString(@StringRes stringId: Int): String {
     val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
-    it[key]?.format(*formatArgs)
-} ?: this.getString(stringId, *formatArgs)
+    return (patches?.let { it[key] }
+            ?: this.getString(stringId)).addDebug(key)
+}
 
+fun Resources.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): String {
+    val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
+    return (patches?.let { it[key]?.format(*formatArgs) }
+            ?: this.getString(stringId, *formatArgs)).addDebug(key)
+}
+
+
+private fun String.addDebug(key: String): String {
+    if (stringPatcherDebugEnabled) {
+        return "$key  📝  $this"
+    }
+    return this
+}
 
 
 
