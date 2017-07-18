@@ -25,7 +25,7 @@ allprojects {
 Add to app module gradle.build file
 ```
 dependencies {
-    compile 'com.github.cookpad:StringsPatcher:0.0.2'
+    compile 'com.github.cookpad:StringsPatcher:0.0.3'
 }
 ```
 
@@ -110,6 +110,6 @@ class StringsPatcherApp : Application() {
  * *logger*: callback function to listen for errors emission. As default a dummy implementation does nothing.
  * *googleCredentials*: only supply these credentials if the spreadSheet has private access.
  
-Once StringPatches has been initalized, in order to access the patches, you must retrieve string resources at runtime by calling either `Context::getSmartString` or `Resources::getSmartString`.
+Once StringPatches has been initalized, in order to access the patches, you must retrieve string resources at runtime by calling either `Context::getSmartString` or `Resources::getSmartString`. For formatting strings, `Context::getSmartString(formatArgs)` and `Resources::getSmartString(formatArgs)` are exposed.
 
 If there is no patch for a given key, the library fallbacks to the system resources.
