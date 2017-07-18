@@ -1,6 +1,7 @@
 Version 0.0.3 *(2017-18-07)*
 ----------------------------
 
+Add support for debug mode.
 Add support for formatted strings.
 
 
