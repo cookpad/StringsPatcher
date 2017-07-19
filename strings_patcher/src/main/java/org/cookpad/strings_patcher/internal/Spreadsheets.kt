@@ -35,12 +35,15 @@ internal fun downloadPatches(googleCredentials: GoogleCredentials?, spreadSheetK
     val worksheetIndex = getIndexFromWorksheetName(spreadSheetsInfoEntries, worksheetName)
 
     val spreadSheetContentsUrl = "$URL_BASE/list/$spreadSheetKey/$worksheetIndex/$scope/values?alt=json$accessToken"
-    val spreadSheetContentsEntries = jsonFromGETRequest(spreadSheetContentsUrl)
-            .getJSONObject("feed")
-            .getJSONArray("entry")
+    val spreadSheetContentsFeed = jsonFromGETRequest(spreadSheetContentsUrl).getJSONObject("feed")
 
-    val downloadedPatches = getPatchesFromWorksheet(spreadSheetContentsEntries, locale)
-    return downloadedPatches
+    if (spreadSheetContentsFeed.has("entry")) {
+        val spreadSheetContentsEntries = spreadSheetContentsFeed.getJSONArray("entry")
+        val downloadedPatches = getPatchesFromWorksheet(spreadSheetContentsEntries, locale)
+        return downloadedPatches
+    } else {
+        return mapOf<String, String>()
+    }
 }
 
 private fun getIndexFromWorksheetName(entries: JSONArray, worksheetName: String) =
