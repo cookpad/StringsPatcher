@@ -37,7 +37,7 @@ internal fun loadPatches(context: Context): Map<String, String>? {
     if (!file.exists()) return null
 
     val fileInputStream = FileInputStream(file)
-    ObjectInputStream(fileInputStream).use { return it.readObject() as HashMap<String, String> }
+    ObjectInputStream(fileInputStream).use { return it.readObject() as Map<String, String> }
 }
 
 internal fun removePatches(context: Context) {
