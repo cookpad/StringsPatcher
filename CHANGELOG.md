@@ -1,3 +1,9 @@
+Version 0.0.5 *(2017-24-07)*
+----------------------------
+
+Patch strings resources set from XML layout.
+
+
 Version 0.0.4 *(2017-19-07)*
 ----------------------------
 

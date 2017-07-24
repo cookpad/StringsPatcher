@@ -25,7 +25,7 @@ allprojects {
 Add to app module gradle.build file
 ```
 dependencies {
-    compile 'com.github.cookpad:StringsPatcher:0.0.4'
+    compile 'com.github.cookpad:StringsPatcher:0.0.5'
 }
 ```
 
@@ -103,16 +103,23 @@ class StringsPatcherApp : Application() {
 } 
 ```
 
+### Programmatically
+
 `syncStringPatcher` expose next optional params:
 
  * *worksheetName*: the worksheet name (The spreadsheet may be composed by several worksheets). This param has as default value the versionCode of the application. That way, your spreadsheet should have as many worksheets as release versions (1,2,3,4,...).
  * *locale*: the locale used to filter strings. As default value the system locale is assigned.
  * *logger*: callback function to listen for errors emission. As default a dummy implementation does nothing.
+ * *resourcesClass*: supply the auto-generated R.string::class of your app only if it is required patching strings set from xml layouts.
  * *googleCredentials*: only supply these credentials if the spreadSheet has private access.
- 
-Once StringPatches has been initalized, in order to access the patches, you must retrieve string resources at runtime by calling either `Context::getSmartString` or `Resources::getSmartString`. For formatting strings, `Context::getSmartString(formatArgs)` and `Resources::getSmartString(formatArgs)` are exposed.
+
+Once StringPatches has been initialized, in order to access the patches, you must retrieve string resources at runtime by calling either `Context::getSmartString` or `Resources::getSmartString`. For formatting strings, `Context::getSmartString(formatArgs)` and `Resources::getSmartString(formatArgs)` are exposed.
 
 If there is no patch for a given key, the library fallbacks to the system resources.
+
+### XML layout
+
+It's possible to patch strings which have been set from XML layouts. Call `bindStringsPatchers` supplying the `View` root from which you want to start replacing strings recursively (**be aware that this may be a penalty performance for very nested views**). An standard way of using it may be calling it `onStart` `Activity` event and supplying its view root, another more holistic approach would be using `ActivityLifecycleCallbacks` to configure the previous behaviour in a row for every single `Activity` of your application. For a working example, take a look to the [app_test module](https://github.com/cookpad/StringsPatcher/blob/master/app_test/src/main/java/org/cookpad/stringspatcher/StringsPatcherApp.kt#L13).
 
 ### Debug
 By setting `stringPatcherDebugEnabled` as true the lib will append to the value its associated key, as such as a pencil emoji. This is intended to make clear which values are handled by the lib and, therefore, eligible to be updated by changing its value from the spreadsheet.
