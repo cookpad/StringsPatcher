@@ -89,7 +89,7 @@ internal val bindTextView: (TextView) -> Unit = { textView ->
                     null
                 } else {
                     targetKey = get(0)
-                    patches?.get(get(0))
+                    patches[get(0)]
                 }
             }
 

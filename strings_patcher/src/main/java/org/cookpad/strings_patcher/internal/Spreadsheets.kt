@@ -42,7 +42,7 @@ internal fun downloadPatches(googleCredentials: GoogleCredentials?, spreadSheetK
         val downloadedPatches = getPatchesFromWorksheet(spreadSheetContentsEntries, locale)
         return downloadedPatches
     } else {
-        return mapOf<String, String>()
+        return emptyMap()
     }
 }
 
