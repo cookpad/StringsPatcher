@@ -52,19 +52,20 @@ internal fun getAllKeysValuesResources(clazz: Class<*>, context: Context): Map<S
                 .filter { !it.first.isEmpty() || !it.second.isEmpty() }
                 .toMap()
 
-internal fun traverseView(root: ViewGroup, process: (TextView) -> Unit): Unit =
-        (0 until root.childCount)
-                .forEach { i ->
-                    val child = root.getChildAt(i)
+internal fun traverseView(root: ViewGroup, process: (TextView) -> Unit) {
+    (0 until root.childCount)
+            .forEach { i ->
+                val child = root.getChildAt(i)
 
-                    if (child is TextView) {
-                        process.invoke(child)
-                    }
-
-                    if (child is ViewGroup) {
-                        traverseView(child, process)
-                    }
+                if (child is TextView) {
+                    process.invoke(child)
                 }
+
+                if (child is ViewGroup) {
+                    traverseView(child, process)
+                }
+            }
+}
 
 internal val bindTextView: (TextView) -> Unit = { textView ->
     var isHint = false
