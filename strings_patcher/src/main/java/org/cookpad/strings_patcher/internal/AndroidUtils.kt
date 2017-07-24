@@ -52,7 +52,7 @@ internal fun getAllKeysValuesResources(clazz: Class<*>, context: Context): Map<S
                 .filter { !it.first.isEmpty() || !it.second.isEmpty() }
                 .toMap()
 
-internal fun traverseView(root: ViewGroup, process: (TextView) -> Unit) {
+internal fun replaceTextRecursively(root: ViewGroup, process: (TextView) -> Unit) {
     (0 until root.childCount)
             .forEach { i ->
                 val child = root.getChildAt(i)
@@ -62,7 +62,7 @@ internal fun traverseView(root: ViewGroup, process: (TextView) -> Unit) {
                 }
 
                 if (child is ViewGroup) {
-                    traverseView(child, process)
+                    replaceTextRecursively(child, process)
                 }
             }
 }
