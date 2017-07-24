@@ -20,9 +20,15 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.AsyncTask
 import android.support.annotation.StringRes
+import android.support.annotation.VisibleForTesting
+import android.view.ViewGroup
 import org.cookpad.strings_patcher.internal.*
 
-private var patches: Map<String, String>? = null
+@VisibleForTesting
+internal var patches: Map<String, String>? = null
+@VisibleForTesting
+internal var keysValuesResources: Map<String, String> = emptyMap()
+
 var stringPatcherDebugEnabled = false
 
 /**
@@ -38,14 +44,16 @@ var stringPatcherDebugEnabled = false
  * have as many worksheets as release versions (1,2,3,4,...)
  * @property locale the locale used to filter strings. As default value the system locale is assigned.
  * @property logger callback function to listen for errors emission. As default a dummy implementation does nothing.
+ * @property resourcesClass supply the auto-generated R.string::class of your app only if it is required patching strings set from xml layouts.
  * @property googleCredentials only supply these credentials if the spreadSheet has private access
  */
 @JvmOverloads
 fun syncStringPatcher(context: Context,
                       spreadSheetKey: String,
                       worksheetName: String = versionCode(context),
-                      locale: String = defaultLocale,
+                      locale: String = defaultLocale(),
                       logger: (Throwable) -> Unit = {},
+                      resourcesClass: Class<*>? = null,
                       googleCredentials: GoogleCredentials? = null) {
 
     val lastWorksheetName = loadWorksheetName(context)
@@ -61,28 +69,59 @@ fun syncStringPatcher(context: Context,
             patches = loadPatches(context)
             patches = downloadPatches(googleCredentials, spreadSheetKey, worksheetName, locale, context)
             patches?.let { savePatches(it, context) }
+            resourcesClass?.let { keysValuesResources = getAllKeysValuesResources(it, context) }
         } catch (e: Exception) {
             logger.invoke(e)
         }
     }
 }
 
+/**
+ * Call it to return the patched string or fallback to the string value associated with the particular resource ID.
+ *
+ * @property stringId the key as a resource ID of the string to be patched
+ */
 fun Context.getSmartString(@StringRes stringId: Int): String = resources.getSmartString(stringId)
 
+/**
+ * Call it to return the patched string or fallback to the string value associated with the particular resource ID.
+ *
+ * @property stringId the key as a resource ID of the string to be patched
+ * @property formatArgs the format arguments that will be used for substitution.
+ */
 fun Context.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): String = resources.getSmartString(stringId, *formatArgs)
 
+/**
+ * Call it to return the patched string or fallback to the string value associated with the particular resource ID.
+ *
+ * @property stringId the key as a resource ID of the string to be patched
+ */
 fun Resources.getSmartString(@StringRes stringId: Int): String {
     val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
     return (patches?.let { it[key] }
             ?: this.getString(stringId)).addDebug(key)
 }
 
+/**
+ * Call it to return the patched string or fallback to the string value associated with the particular resource ID
+ *
+ * @property stringId the key as a resource ID of the string to be patched
+ * @property formatArgs the format arguments that will be used for substitution.
+ */
 fun Resources.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): String {
     val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
     return (patches?.let { it[key]?.format(*formatArgs) }
             ?: this.getString(stringId, *formatArgs)).addDebug(key)
 }
 
+/**
+ * Call it after views has been inflated for an specific activity or use instead ActivityLifecycleCallbacks to use
+ * a centralized approach.
+ */
+fun bindStringsPatchers(root: ViewGroup) {
+    if (keysValuesResources.isEmpty()) return
+    traverseView(root, bindTextView)
+}
 
 private fun String.addDebug(key: String): String {
     if (stringPatcherDebugEnabled) {

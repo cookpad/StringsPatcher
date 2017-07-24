@@ -19,15 +19,78 @@ package org.cookpad.strings_patcher.internal
 import android.content.Context
 import android.content.res.Resources
 import android.os.Build
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
+import org.cookpad.strings_patcher.keysValuesResources
+import org.cookpad.strings_patcher.patches
+import java.lang.reflect.Modifier
 
 internal fun versionCode(context: Context): String =
         context.packageManager.getPackageInfo(context.packageName, 0).versionCode.toString()
 
-internal val defaultLocale: String =
+internal fun defaultLocale(): String =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Resources.getSystem().configuration.locales[0].language
         } else {
             Resources.getSystem().configuration.locale.language
         }
+
+internal fun getAllKeysValuesResources(clazz: Class<*>, context: Context): Map<String, String> =
+        clazz.declaredFields
+                .filter { Modifier.isStatic(it.modifiers) && !Modifier.isPrivate(it.modifiers) && it.type == Int::class.javaPrimitiveType }
+                .map {
+                    val resourceName = it.name
+                    val resource = context.resources.getIdentifier(resourceName, "string", context.packageName)
+                    it.name to context.getString(resource)
+                }
+                .toMap()
+
+internal fun traverseView(root: ViewGroup, process: (TextView) -> Unit): Unit =
+        (0 until root.childCount)
+                .forEach { i ->
+                    val child = root.getChildAt(i)
+
+                    if (child is TextView) {
+                        process.invoke(child)
+                    }
+
+                    if (child is ViewGroup) {
+                        traverseView(child, process)
+                    }
+                }
+
+internal val bindTextView: (TextView) -> Unit = { textView ->
+    var isHint = false
+    val value = keysValuesResources
+            .filterValues {
+                var matches = it == textView.text.toString()
+                if (!matches && textView is EditText) {
+                    if (it == textView.hint) {
+                        matches = true
+                        isHint = true
+                    }
+                }
+                matches
+            }
+            .map { it.key }
+            .run {
+                if (size != 1) null
+                else patches?.get(get(0))
+            }
+
+    if (!value.isNullOrBlank()) {
+        if (isHint && textView is EditText) {
+            textView.hint = value
+        } else {
+            textView.text = value
+        }
+    }
+}
+
+
+
+
+
 
 
