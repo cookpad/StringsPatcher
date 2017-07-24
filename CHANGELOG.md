@@ -1,3 +1,9 @@
+Version 0.0.8 *(2017-24-07)*
+----------------------------
+
+Add debug mode for resources loaded from xml
+
+
 Version 0.0.7 *(2017-24-07)*
 ----------------------------
 
