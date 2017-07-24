@@ -25,7 +25,7 @@ allprojects {
 Add to app module gradle.build file
 ```
 dependencies {
-    compile 'com.github.cookpad:StringsPatcher:0.0.6'
+    compile 'com.github.cookpad:StringsPatcher:0.0.7'
 }
 ```
 

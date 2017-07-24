@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.github.cookpad'
-version = '0.0.6'
+version = '0.0.7'
 
 android {
     compileSdkVersion 25
