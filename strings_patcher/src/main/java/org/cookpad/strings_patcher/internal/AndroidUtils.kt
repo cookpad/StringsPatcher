@@ -52,7 +52,7 @@ internal fun getAllKeysValuesResources(clazz: Class<*>, context: Context): Map<S
                 .filter { !it.first.isEmpty() || !it.second.isEmpty() }
                 .toMap()
 
-internal fun replaceTextRecursively(root: ViewGroup, process: (TextView) -> Unit) {
+internal fun replaceTextRecursively(root: ViewGroup, process: (TextView) -> Unit = bindTextView) {
     (0 until root.childCount)
             .forEach { i ->
                 val child = root.getChildAt(i)
@@ -74,8 +74,7 @@ internal val bindTextView: (TextView) -> Unit = { textView ->
     val value = keysValuesResources
             .filterValues {
                 val text = textView.text.toString()
-                var matches = it == text && !text.isNullOrEmpty() && !it.isNullOrEmpty()
-
+                var matches = (it == text && !text.isNullOrEmpty() && !it.isNullOrEmpty())
                 if (!matches && textView is EditText) {
                     if (it == textView.hint) {
                         matches = true

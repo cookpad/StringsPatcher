@@ -118,7 +118,7 @@ fun Resources.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): 
  */
 fun bindStringsPatchers(root: ViewGroup) {
     if (keysValuesResources.isEmpty()) return
-    replaceTextRecursively(root, bindTextView)
+    replaceTextRecursively(root)
 }
 
 internal fun String.addDebug(key: String?): String {
