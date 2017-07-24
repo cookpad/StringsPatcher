@@ -28,13 +28,11 @@ import java.net.URL
 
 internal fun jsonFromGETRequest(url: String): JSONObject {
     var urlConnection: HttpURLConnection? = null
-    try {
+    return try {
         urlConnection = URL(url).openConnection() as HttpURLConnection
         val input = BufferedInputStream(urlConnection.inputStream)
         val jsonString = input.bufferedReader().use { it.readText() }
-        return JSONObject(jsonString)
-    } catch (e: IOException) {
-        throw e
+        JSONObject(jsonString)
     } finally {
         urlConnection?.disconnect()
     }
@@ -42,22 +40,21 @@ internal fun jsonFromGETRequest(url: String): JSONObject {
 
 internal fun jsonFromPOSTRequest(url: String, params: Uri.Builder): JSONObject {
     var urlConnection: HttpURLConnection? = null
-    try {
-        urlConnection = URL(url).openConnection() as HttpURLConnection
-        urlConnection.readTimeout = 10000
-        urlConnection.connectTimeout = 15000
-        urlConnection.requestMethod = "POST"
-        urlConnection.doInput = true
-        urlConnection.doOutput = true
+    return try {
+        urlConnection = (URL(url).openConnection() as HttpURLConnection).apply {
+            readTimeout = 10000
+            connectTimeout = 15000
+            requestMethod = "POST"
+            doInput = true
+            doOutput = true
+        }
 
         val query = params.build().encodedQuery
 
-        val os = urlConnection.outputStream
-        val writer = BufferedWriter(OutputStreamWriter(os, "UTF-8"))
-        writer.write(query)
-        writer.flush()
-        writer.close()
-        os.close()
+        BufferedWriter(OutputStreamWriter(urlConnection.outputStream, "UTF-8")).use {
+            it.write(query)
+            it.flush()
+        }
 
         urlConnection.connect()
 
@@ -69,9 +66,7 @@ internal fun jsonFromPOSTRequest(url: String, params: Uri.Builder): JSONObject {
 
         val input = BufferedInputStream(urlConnection.inputStream)
         val jsonString = input.bufferedReader().use { it.readText() }
-        return JSONObject(jsonString)
-    } catch (e: IOException) {
-        throw e
+        JSONObject(jsonString)
     } finally {
         urlConnection?.disconnect()
     }
