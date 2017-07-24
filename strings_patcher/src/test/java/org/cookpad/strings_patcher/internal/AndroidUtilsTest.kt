@@ -85,6 +85,7 @@ class AndroidUtilsTest {
         val val1 = "val1"
         val val2 = "val2"
         val val3 = "val3"
+        val val4 = ""
 
         val path1 = "path1"
         val path2 = "path2"
@@ -93,6 +94,7 @@ class AndroidUtilsTest {
         val key1 = "key1"
         val key2 = "key2"
         val key3 = "key3"
+        val key4 = ""
 
         keysValuesResources = mapOf(key1 to val1, key2 to val2, key3 to val3)
         patches = mapOf(key1 to path1, key2 to path2, key3 to path3)
@@ -116,6 +118,11 @@ class AndroidUtilsTest {
         whenever(tv4.text).thenReturn("no matches")
         bindTextView(tv4)
         verify(tv4, never()).text = any()
+
+        val tv5 = mock<TextView>()
+        whenever(tv5.text).thenReturn(val4)
+        bindTextView(tv5)
+        verify(tv5, never()).text = any()
 
         val et1 = mock<EditText>()
         val editable1 = mock<Editable>()

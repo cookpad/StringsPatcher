@@ -69,7 +69,9 @@ internal val bindTextView: (TextView) -> Unit = { textView ->
     var isHint = false
     val value = keysValuesResources
             .filterValues {
-                var matches = it == textView.text.toString()
+                val text = textView.text.toString()
+                var matches = it == text && !text.isNullOrEmpty() && !it.isNullOrEmpty()
+
                 if (!matches && textView is EditText) {
                     if (it == textView.hint) {
                         matches = true
