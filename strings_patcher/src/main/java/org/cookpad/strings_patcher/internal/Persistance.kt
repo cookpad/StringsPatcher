@@ -17,7 +17,6 @@
 package org.cookpad.strings_patcher.internal
 
 import android.content.Context
-import org.json.JSONArray
 import java.io.File
 import java.io.FileInputStream
 import java.io.ObjectInputStream
