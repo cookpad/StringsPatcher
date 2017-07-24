@@ -30,6 +30,7 @@ dependencies {
     compile "com.android.support:support-annotations:25.4.0"
     testCompile 'junit:junit:4.12'
     testCompile "org.assertj:assertj-core:2.1.0"
+    testCompile "com.nhaarman:mockito-kotlin:1.5.0"
 }
 repositories {
     mavenCentral()
