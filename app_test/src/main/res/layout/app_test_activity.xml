@@ -91,4 +91,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/restart_activity" />
+
+    <Button
+        android:id="@+id/btStringPatcherDebugEnabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/string_patcher_debug_enabled" />
 </LinearLayout>

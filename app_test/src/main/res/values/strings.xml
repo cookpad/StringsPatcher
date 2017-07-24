@@ -10,4 +10,5 @@
     <string name="value4">value4</string>
     <string name="value5">value5</string>
     <string name="restart_activity">Restart activity</string>
+    <string name="string_patcher_debug_enabled">String patcher debug enabled</string>
 </resources>

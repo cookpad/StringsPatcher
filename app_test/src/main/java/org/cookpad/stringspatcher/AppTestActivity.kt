@@ -18,6 +18,7 @@ package org.cookpad.stringspatcher
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import org.cookpad.strings_patcher.stringPatcherDebugEnabled
 
 
 class AppTestActivity : AppCompatActivity() {
@@ -31,6 +32,10 @@ class AppTestActivity : AppCompatActivity() {
             val intent = intent
             finish()
             startActivity(intent)
+        }
+
+        findViewById(R.id.btStringPatcherDebugEnabled).setOnClickListener {
+            stringPatcherDebugEnabled = true
         }
     }
 

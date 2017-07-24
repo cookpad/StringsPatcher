@@ -123,7 +123,9 @@ fun bindStringsPatchers(root: ViewGroup) {
     traverseView(root, bindTextView)
 }
 
-private fun String.addDebug(key: String): String {
+internal fun String.addDebug(key: String?): String {
+    if (key.isNullOrEmpty()) return this
+
     if (stringPatcherDebugEnabled) {
         return "$key  📝  $this"
     }

@@ -28,6 +28,7 @@ import com.nhaarman.mockito_kotlin.*
 import org.assertj.core.api.Assertions.assertThat
 import org.cookpad.strings_patcher.keysValuesResources
 import org.cookpad.strings_patcher.patches
+import org.cookpad.strings_patcher.stringPatcherDebugEnabled
 import org.junit.Test
 
 class AndroidUtilsTest {
@@ -114,15 +115,16 @@ class AndroidUtilsTest {
         bindTextView(tv3)
         verify(tv3, times(1)).text = path3
 
+        val notMatches = "no matches"
         val tv4 = mock<TextView>()
-        whenever(tv4.text).thenReturn("no matches")
+        whenever(tv4.text).thenReturn(notMatches)
         bindTextView(tv4)
-        verify(tv4, never()).text = any()
+        verify(tv4, times(1)).text = notMatches
 
         val tv5 = mock<TextView>()
         whenever(tv5.text).thenReturn(val4)
         bindTextView(tv5)
-        verify(tv5, never()).text = any()
+        verify(tv5, times(1)).text = val4
 
         val et1 = mock<EditText>()
         val editable1 = mock<Editable>()
@@ -134,10 +136,20 @@ class AndroidUtilsTest {
         val et2 = mock<EditText>()
         val editable2 = mock<Editable>()
         whenever(et2.text).thenReturn(editable2)
-        whenever(editable2.toString()).thenReturn("no matches")
+        whenever(editable2.toString()).thenReturn("ignored")
         whenever(et2.hint).thenReturn(val2)
         bindTextView(et2)
         verify(et2, times(1)).hint = path2
+
+
+        stringPatcherDebugEnabled = true
+
+        val tv1Debug = mock<TextView>()
+        whenever(tv1Debug.text).thenReturn(val1)
+        bindTextView(tv1Debug)
+        verify(tv1Debug, times(1)).text = "key1  📝  path1"
+
+        stringPatcherDebugEnabled = false
     }
 
 }

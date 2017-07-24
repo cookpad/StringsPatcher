@@ -22,6 +22,7 @@ import android.os.Build
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import org.cookpad.strings_patcher.addDebug
 import org.cookpad.strings_patcher.keysValuesResources
 import org.cookpad.strings_patcher.patches
 import java.lang.reflect.Modifier
@@ -67,6 +68,8 @@ internal fun traverseView(root: ViewGroup, process: (TextView) -> Unit): Unit =
 
 internal val bindTextView: (TextView) -> Unit = { textView ->
     var isHint = false
+    var targetKey: String? = null
+
     val value = keysValuesResources
             .filterValues {
                 val text = textView.text.toString()
@@ -82,16 +85,20 @@ internal val bindTextView: (TextView) -> Unit = { textView ->
             }
             .map { it.key }
             .run {
-                if (size != 1) null
-                else patches?.get(get(0))
+                if (size != 1) {
+                    null
+                } else {
+                    targetKey = get(0)
+                    patches?.get(get(0))
+                }
             }
 
-    if (!value.isNullOrBlank()) {
-        if (isHint && textView is EditText) {
-            textView.hint = value
-        } else {
-            textView.text = value
-        }
+    val text = (value ?: textView.text.toString()).addDebug(targetKey)
+
+    if (isHint && textView is EditText) {
+        textView.hint = text
+    } else {
+        textView.text = text
     }
 }
 
