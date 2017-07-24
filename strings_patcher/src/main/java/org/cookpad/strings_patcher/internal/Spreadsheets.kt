@@ -28,14 +28,14 @@ internal fun downloadPatches(googleCredentials: GoogleCredentials?, spreadSheetK
     val accessToken = googleCredentials?.let { "&access_token=${accessToken(it, context)}" } ?: ""
 
     val spreadSheetsInfoUrl = "$URL_BASE/worksheets/$spreadSheetKey/$scope/full?alt=json$accessToken"
-    val spreadSheetsInfoEntries = jsonFromGETRequest(spreadSheetsInfoUrl)
+    val spreadSheetsInfoEntries = jsonFromGetRequest(spreadSheetsInfoUrl)
             .getJSONObject("feed")
             .getJSONArray("entry")
 
     val worksheetIndex = getIndexFromWorksheetName(spreadSheetsInfoEntries, worksheetName)
 
     val spreadSheetContentsUrl = "$URL_BASE/list/$spreadSheetKey/$worksheetIndex/$scope/values?alt=json$accessToken"
-    val spreadSheetContentsFeed = jsonFromGETRequest(spreadSheetContentsUrl).getJSONObject("feed")
+    val spreadSheetContentsFeed = jsonFromGetRequest(spreadSheetContentsUrl).getJSONObject("feed")
 
     if (spreadSheetContentsFeed.has("entry")) {
         val spreadSheetContentsEntries = spreadSheetContentsFeed.getJSONArray("entry")

@@ -44,7 +44,7 @@ private fun tokenFromServer(googleCredentials: GoogleCredentials, context: Conte
             .appendQueryParameter("grant_type", "refresh_token")
 
     val URL = "https://www.googleapis.com/oauth2/v4/token"
-    val response = jsonFromPOSTRequest(URL, builder)
+    val response = jsonFromPostRequest(URL, builder)
     val accessToken = response.getString("access_token")
 
     saveTokenAndExpirationDate(accessToken, expireDate(response.getLong("expires_in")), context)

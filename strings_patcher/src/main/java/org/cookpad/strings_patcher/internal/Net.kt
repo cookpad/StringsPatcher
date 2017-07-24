@@ -26,7 +26,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-internal fun jsonFromGETRequest(url: String): JSONObject {
+internal fun jsonFromGetRequest(url: String): JSONObject {
     var urlConnection: HttpURLConnection? = null
     return try {
         urlConnection = URL(url).openConnection() as HttpURLConnection
@@ -38,7 +38,7 @@ internal fun jsonFromGETRequest(url: String): JSONObject {
     }
 }
 
-internal fun jsonFromPOSTRequest(url: String, params: Uri.Builder): JSONObject {
+internal fun jsonFromPostRequest(url: String, params: Uri.Builder): JSONObject {
     var urlConnection: HttpURLConnection? = null
     return try {
         urlConnection = (URL(url).openConnection() as HttpURLConnection).apply {
