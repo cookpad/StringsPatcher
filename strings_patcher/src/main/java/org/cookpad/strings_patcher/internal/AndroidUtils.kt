@@ -44,7 +44,7 @@ internal fun getAllKeysValuesResources(clazz: Class<*>, context: Context): Map<S
                     val resourceName = it.name
                     try {
                         val resource = context.resources.getIdentifier(resourceName, "string", context.packageName)
-                        it.name to context.getString(resource)
+                        resourceName to context.getString(resource)
                     } catch (e: Resources.NotFoundException) {
                         "" to ""
                     }
