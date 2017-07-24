@@ -41,9 +41,14 @@ internal fun getAllKeysValuesResources(clazz: Class<*>, context: Context): Map<S
                 .filter { Modifier.isStatic(it.modifiers) && !Modifier.isPrivate(it.modifiers) && it.type == Int::class.javaPrimitiveType }
                 .map {
                     val resourceName = it.name
-                    val resource = context.resources.getIdentifier(resourceName, "string", context.packageName)
-                    it.name to context.getString(resource)
+                    try {
+                        val resource = context.resources.getIdentifier(resourceName, "string", context.packageName)
+                        it.name to context.getString(resource)
+                    } catch (e: Resources.NotFoundException) {
+                        "" to ""
+                    }
                 }
+                .filter { !it.first.isEmpty() || !it.second.isEmpty() }
                 .toMap()
 
 internal fun traverseView(root: ViewGroup, process: (TextView) -> Unit): Unit =
