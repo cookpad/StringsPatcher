@@ -8,6 +8,8 @@ class StringsPatcherApp : Application() {
         super.onCreate()
 
         val spreadSheetKey = "1p65l4BFcIvn6Qaco9nSyUhj-Y6Q-3gpqxtP4wZ24yNM"
-        syncStringPatcher(this, spreadSheetKey)
+        syncStringPatcher(this, spreadSheetKey, resourcesClass = R.string::class.java)
+
+        registerActivityLifecycleCallbacks(LifecycleObserver())
     }
 }

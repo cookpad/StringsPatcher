@@ -4,4 +4,10 @@
     <string name="farewell_message">Farewell message</string>
     <string name="save">Save</string>
     <string name="no_results_found">No results found for %s</string>
+    <string name="value1">value1</string>
+    <string name="value2">value2</string>
+    <string name="value3">value3</string>
+    <string name="value4">value4</string>
+    <string name="value5">value5</string>
+    <string name="restart_activity">Restart activity</string>
 </resources>

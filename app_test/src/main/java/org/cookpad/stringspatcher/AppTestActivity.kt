@@ -18,8 +18,7 @@ package org.cookpad.stringspatcher
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.app_test_activity.*
-import org.cookpad.strings_patcher.getSmartString
+
 
 class AppTestActivity : AppCompatActivity() {
 
@@ -27,8 +26,12 @@ class AppTestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_test_activity)
 
-        tvWelcome.text =  getSmartString(R.string.welcome_message)
-        tvFarewell.text =  getSmartString(R.string.farewell_message)
-        btSave.text = getSmartString(R.string.save)
+
+        findViewById(R.id.btRestartActivity).setOnClickListener {
+            val intent = intent
+            finish()
+            startActivity(intent)
+        }
     }
+
 }
