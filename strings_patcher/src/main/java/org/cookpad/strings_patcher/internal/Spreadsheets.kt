@@ -20,7 +20,6 @@ import android.content.Context
 import org.json.JSONArray
 
 private val URL_BASE = "https://spreadsheets.google.com/feeds"
-private val SPREADSHEET_NOT_FOUND_ERROR = "Spreadsheet not found"
 
 internal fun downloadPatches(googleCredentials: GoogleCredentials?, spreadSheetKey: String, worksheetName: String,
                              locale: String, context: Context): Map<String, String> {
@@ -28,28 +27,28 @@ internal fun downloadPatches(googleCredentials: GoogleCredentials?, spreadSheetK
     val accessToken = googleCredentials?.let { "&access_token=${accessToken(it, context)}" } ?: ""
 
     val spreadSheetsInfoUrl = "$URL_BASE/worksheets/$spreadSheetKey/$scope/full?alt=json$accessToken"
-    val spreadSheetsInfoEntries = jsonFromGETRequest(spreadSheetsInfoUrl)
+    val spreadSheetsInfoEntries = jsonFromGetRequest(spreadSheetsInfoUrl)
             .getJSONObject("feed")
             .getJSONArray("entry")
 
     val worksheetIndex = getIndexFromWorksheetName(spreadSheetsInfoEntries, worksheetName)
 
     val spreadSheetContentsUrl = "$URL_BASE/list/$spreadSheetKey/$worksheetIndex/$scope/values?alt=json$accessToken"
-    val spreadSheetContentsFeed = jsonFromGETRequest(spreadSheetContentsUrl).getJSONObject("feed")
+    val spreadSheetContentsFeed = jsonFromGetRequest(spreadSheetContentsUrl).getJSONObject("feed")
 
     if (spreadSheetContentsFeed.has("entry")) {
         val spreadSheetContentsEntries = spreadSheetContentsFeed.getJSONArray("entry")
         val downloadedPatches = getPatchesFromWorksheet(spreadSheetContentsEntries, locale)
         return downloadedPatches
     } else {
-        return mapOf<String, String>()
+        return emptyMap()
     }
 }
 
 private fun getIndexFromWorksheetName(entries: JSONArray, worksheetName: String) =
         ((0 until entries.length())
                 .indexOfFirst { i -> entries.getNestedString(i, "title") == worksheetName }
-                .takeIf { it != -1 } ?: throw RuntimeException(SPREADSHEET_NOT_FOUND_ERROR)) + 1
+                .takeIf { it != -1 } ?: throw RuntimeException("Spreadsheet not found")) + 1
 
 private fun getPatchesFromWorksheet(entries: JSONArray, locale: String) =
         (0 until entries.length())

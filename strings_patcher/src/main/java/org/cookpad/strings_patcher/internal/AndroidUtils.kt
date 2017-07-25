@@ -44,7 +44,7 @@ internal fun getAllKeysValuesResources(clazz: Class<*>, context: Context): Map<S
                     val resourceName = it.name
                     try {
                         val resource = context.resources.getIdentifier(resourceName, "string", context.packageName)
-                        it.name to context.getString(resource)
+                        resourceName to context.getString(resource)
                     } catch (e: Resources.NotFoundException) {
                         "" to ""
                     }
@@ -52,19 +52,20 @@ internal fun getAllKeysValuesResources(clazz: Class<*>, context: Context): Map<S
                 .filter { !it.first.isEmpty() || !it.second.isEmpty() }
                 .toMap()
 
-internal fun traverseView(root: ViewGroup, process: (TextView) -> Unit): Unit =
-        (0 until root.childCount)
-                .forEach { i ->
-                    val child = root.getChildAt(i)
+internal fun replaceTextRecursively(root: ViewGroup, process: (TextView) -> Unit = bindTextView) {
+    (0 until root.childCount)
+            .forEach { i ->
+                val child = root.getChildAt(i)
 
-                    if (child is TextView) {
-                        process.invoke(child)
-                    }
-
-                    if (child is ViewGroup) {
-                        traverseView(child, process)
-                    }
+                if (child is TextView) {
+                    process.invoke(child)
                 }
+
+                if (child is ViewGroup) {
+                    replaceTextRecursively(child, process)
+                }
+            }
+}
 
 internal val bindTextView: (TextView) -> Unit = { textView ->
     var isHint = false
@@ -73,8 +74,7 @@ internal val bindTextView: (TextView) -> Unit = { textView ->
     val value = keysValuesResources
             .filterValues {
                 val text = textView.text.toString()
-                var matches = it == text && !text.isNullOrEmpty() && !it.isNullOrEmpty()
-
+                var matches = (it == text && !text.isNullOrEmpty() && !it.isNullOrEmpty())
                 if (!matches && textView is EditText) {
                     if (it == textView.hint) {
                         matches = true
@@ -89,7 +89,7 @@ internal val bindTextView: (TextView) -> Unit = { textView ->
                     null
                 } else {
                     targetKey = get(0)
-                    patches?.get(get(0))
+                    patches[get(0)]
                 }
             }
 

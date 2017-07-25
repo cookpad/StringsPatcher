@@ -25,7 +25,8 @@ import android.view.ViewGroup
 import org.cookpad.strings_patcher.internal.*
 
 @VisibleForTesting
-internal var patches: Map<String, String>? = null
+internal var patches: Map<String, String> = emptyMap()
+
 @VisibleForTesting
 internal var keysValuesResources: Map<String, String> = emptyMap()
 
@@ -55,7 +56,6 @@ fun syncStringPatcher(context: Context,
                       logger: (Throwable) -> Unit = {},
                       resourcesClass: Class<*>? = null,
                       googleCredentials: GoogleCredentials? = null) {
-
     val lastWorksheetName = loadWorksheetName(context)
 
     if (lastWorksheetName != null && lastWorksheetName != worksheetName) {
@@ -68,7 +68,7 @@ fun syncStringPatcher(context: Context,
         try {
             patches = loadPatches(context)
             patches = downloadPatches(googleCredentials, spreadSheetKey, worksheetName, locale, context)
-            patches?.let { savePatches(it, context) }
+            savePatches(patches, context)
             resourcesClass?.let { keysValuesResources = getAllKeysValuesResources(it, context) }
         } catch (e: Exception) {
             logger.invoke(e)
@@ -98,8 +98,7 @@ fun Context.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): St
  */
 fun Resources.getSmartString(@StringRes stringId: Int): String {
     val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
-    return (patches?.let { it[key] }
-            ?: this.getString(stringId)).addDebug(key)
+    return (patches[key] ?: this.getString(stringId)).addDebug(key)
 }
 
 /**
@@ -110,8 +109,7 @@ fun Resources.getSmartString(@StringRes stringId: Int): String {
  */
 fun Resources.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): String {
     val key = getResourceName(stringId)?.split("/")?.get(1) ?: ""
-    return (patches?.let { it[key]?.format(*formatArgs) }
-            ?: this.getString(stringId, *formatArgs)).addDebug(key)
+    return (patches[key]?.format(*formatArgs) ?: this.getString(stringId, *formatArgs)).addDebug(key)
 }
 
 /**
@@ -120,7 +118,7 @@ fun Resources.getSmartString(@StringRes stringId: Int, vararg formatArgs: Any): 
  */
 fun bindStringsPatchers(root: ViewGroup) {
     if (keysValuesResources.isEmpty()) return
-    traverseView(root, bindTextView)
+    replaceTextRecursively(root)
 }
 
 internal fun String.addDebug(key: String?): String {

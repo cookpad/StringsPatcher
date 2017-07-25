@@ -20,13 +20,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import org.cookpad.strings_patcher.stringPatcherDebugEnabled
 
-
 class AppTestActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_test_activity)
-
 
         findViewById(R.id.btRestartActivity).setOnClickListener {
             val intent = intent
@@ -38,5 +36,4 @@ class AppTestActivity : AppCompatActivity() {
             stringPatcherDebugEnabled = true
         }
     }
-
 }
