@@ -73,7 +73,7 @@ class AndroidUtilsTest {
         whenever(nested.getChildAt(2)).thenReturn(viewAtNested)
 
         val calledTextViews = mutableListOf<TextView>()
-        traverseView(root, { calledTextViews.add(it) })
+        replaceTextRecursively(root, { calledTextViews.add(it) })
 
         assertThat(calledTextViews).hasSize(4)
         assertThat(calledTextViews[0]).isEqualTo(textViewAtNested)

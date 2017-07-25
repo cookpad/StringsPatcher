@@ -32,9 +32,9 @@ internal fun savePatches(patches: Map<String, String>, context: Context) {
     ObjectOutputStream(fos).use { it.writeObject(patches) }
 }
 
-internal fun loadPatches(context: Context): Map<String, String>? {
+internal fun loadPatches(context: Context): Map<String, String> {
     val file = File(pathPatches(context))
-    if (!file.exists()) return null
+    if (!file.exists()) return emptyMap()
 
     val fileInputStream = FileInputStream(file)
     ObjectInputStream(fileInputStream).use { return it.readObject() as Map<String, String> }

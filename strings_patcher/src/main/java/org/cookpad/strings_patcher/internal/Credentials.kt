@@ -20,6 +20,8 @@ import android.content.Context
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
 
+private val GOOGLE_API_ENDPOINT = "https://www.googleapis.com/oauth2/v4/token"
+
 data class GoogleCredentials(val refreshToken: String, val clientId: String, val clientSecret: String)
 
 internal fun accessToken(googleCredentials: GoogleCredentials, context: Context): String =
@@ -42,9 +44,7 @@ private fun tokenFromServer(googleCredentials: GoogleCredentials, context: Conte
             .appendQueryParameter("client_id", googleCredentials.clientId)
             .appendQueryParameter("client_secret", googleCredentials.clientSecret)
             .appendQueryParameter("grant_type", "refresh_token")
-
-    val URL = "https://www.googleapis.com/oauth2/v4/token"
-    val response = jsonFromPOSTRequest(URL, builder)
+    val response = jsonFromPostRequest(GOOGLE_API_ENDPOINT, builder)
     val accessToken = response.getString("access_token")
 
     saveTokenAndExpirationDate(accessToken, expireDate(response.getLong("expires_in")), context)
@@ -54,5 +54,3 @@ private fun tokenFromServer(googleCredentials: GoogleCredentials, context: Conte
 
 @VisibleForTesting
 internal fun expireDate(expiresInSeconds: Long): Long = expiresInSeconds * 1000 + System.currentTimeMillis()
-
-
