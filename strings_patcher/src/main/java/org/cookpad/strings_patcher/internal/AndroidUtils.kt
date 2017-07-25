@@ -93,7 +93,8 @@ internal val bindTextView: (TextView) -> Unit = { textView ->
                 }
             }
 
-    val text = (value ?: textView.text.toString()).addDebug(targetKey)
+    val textFallback = (textView as? EditText)?.text?.toString() ?: textView.text
+    val text = (value ?: textFallback).addDebug(targetKey)
 
     if (isHint && textView is EditText) {
         textView.hint = text

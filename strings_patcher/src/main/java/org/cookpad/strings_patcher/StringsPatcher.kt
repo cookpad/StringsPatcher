@@ -132,5 +132,14 @@ internal fun String.addDebug(key: String?): String {
     return this
 }
 
+internal fun CharSequence.addDebug(key: String?): CharSequence {
+    if (key.isNullOrEmpty()) return this
+
+    if (stringPatcherDebugEnabled) {
+        return "$key  📝  $this"
+    }
+    return this
+}
+
 
 
