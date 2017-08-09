@@ -93,7 +93,13 @@ internal val bindTextView: (TextView) -> Unit = { textView ->
                 }
             }
 
-    val textFallback = (textView as? EditText)?.text?.toString() ?: textView.text
+    val textFallback: CharSequence
+    if (textView is EditText) {
+        textFallback = if (isHint) textView.hint else textView.text
+    } else {
+        textFallback = textView.text
+    }
+
     val text = (value ?: textFallback).addDebug(targetKey)
 
     if (isHint && textView is EditText) {
