@@ -27,6 +27,7 @@ class StringPatcherXMLTest {
         onView(withText("value3 Updated!")).check(matches(isDisplayed()))
         onView(withText("value4 Updated!")).check(matches(isDisplayed()))
         onView(withId(R.id.etWithHintUpdated)).check(matches(withHint("value5 Updated!")))
+        onView(withId(R.id.etWithHintWithoutPatch)).check(matches(withHint("Value Without Patch")))
 
         onView(withId(R.id.btStringPatcherDebugEnabled)).perform(click())
         onView(withId(R.id.btRestartActivity)).perform(click())
@@ -36,5 +37,6 @@ class StringPatcherXMLTest {
         onView(withText("value3  📝  value3 Updated!")).check(matches(isDisplayed()))
         onView(withText("value4  📝  value4 Updated!")).check(matches(isDisplayed()))
         onView(withId(R.id.etWithHintUpdated)).check(matches(withHint("value5  📝  value5 Updated!")))
+        onView(withId(R.id.etWithHintWithoutPatch)).check(matches(withHint("valueWithoutPatch  📝  Value Without Patch")))
     }
 }
