@@ -1,3 +1,6 @@
+# [DEPRECATED] 
+## :warning: This repository is no longer actively maintained :warning:
+
 # Strings Patcher
 
 It's very common (at least in our company) that just after a new release, someone discovers a translation that is wrong, or even missing in a specific language (we support over 10 different languages).  
